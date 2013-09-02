@@ -118,6 +118,7 @@ describe('$modal', function () {
 
       dismiss(modal, 'closing in test');
 
+      $timeout.flush();
       expect($document).toHaveModalsOpen(0);
       expect($document).not.toHaveBackdrop();
     });
@@ -133,6 +134,7 @@ describe('$modal', function () {
 
       dismiss(modal, 'closing in test');
 
+      $timeout.flush();
       expect($document).toHaveModalsOpen(0);
       expect($document).not.toHaveBackdrop();
     });
@@ -145,6 +147,7 @@ describe('$modal', function () {
       triggerKeyDown($document, 27);
       $rootScope.$digest();
 
+      $timeout.flush();
       expect($document).toHaveModalsOpen(0);
     });
 
@@ -155,7 +158,7 @@ describe('$modal', function () {
 
       $document.find('body > div.modal-backdrop').click();
       $rootScope.$digest();
-
+      $timeout.flush();
       expect($document).toHaveModalsOpen(0);
     });
 
@@ -371,10 +374,12 @@ describe('$modal', function () {
       expect($document).toHaveModalsOpen(2);
 
       dismiss(modal2);
+      $timeout.flush();
       expect($document).toHaveModalsOpen(1);
       expect($document).toHaveModalOpenWithContent('Modal1', 'div');
 
       dismiss(modal1);
+      $timeout.flush();
       expect($document).toHaveModalsOpen(0);
     });
 

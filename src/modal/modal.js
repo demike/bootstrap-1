@@ -92,8 +92,8 @@ angular.module('ui.bootstrap.modal', [])
     };
   }])
 
-  .factory('$modalStack', ['$document', '$compile', '$rootScope', '$$stackedMap',
-    function ($document, $compile, $rootScope, $$stackedMap) {
+  .factory('$modalStack', ['$document', '$compile', '$rootScope', '$timeout', '$$stackedMap',
+    function ($document, $compile, $rootScope,$timeout, $$stackedMap) {
 
       var body = $document.find('body').eq(0);
       var openedWindows = $$stackedMap.createNew();
@@ -106,16 +106,26 @@ angular.module('ui.bootstrap.modal', [])
         //clean up the stack
         openedWindows.remove(modalInstance);
 
-        //remove DOM element
-        modalWindow.modalDomEl.remove();
-
-        //remove backdrop
+        //fade out DOM element
+        modalWindow.modalDomEl.removeClass("in");
+		
+        //fade out backdrop;
         if (modalWindow.backdropDomEl) {
-          modalWindow.backdropDomEl.remove();
+            modalWindow.backdropDomEl.removeClass("in");
         }
 
-        //destroy scope
-        modalWindow.modalScope.$destroy();
+        $timeout(function(){
+            //remove the dom elements
+            modalWindow.modalDomEl.remove();
+            if(modalWindow.backdropDomEl) {
+                modalWindow.backdropDomEl.remove();
+            }
+            //destroy scope
+            modalWindow.modalScope.$destroy();
+            if(!openedWindows.length()) {
+                body.removeClass("modal-open");
+            }
+        },500);
       }
 
       $document.bind('keydown', function (evt) {
@@ -139,7 +149,9 @@ angular.module('ui.bootstrap.modal', [])
           body.append(backdropDomEl);
         }
         var modalDomEl = $compile(angular.element('<modal-window>').html(modal.content))(modal.scope);
-        body.append(modalDomEl);
+        angular.element(modalDomEl).attr("display","block");
+        body.append(modalDomEl).addClass("modal-open");
+        
 
         
 
